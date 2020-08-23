@@ -31,7 +31,7 @@ printf "\n*** Cloning Tailwind code repository... ***\n"
 
 # Clone Tailwind backend and checkout known stable tag
 git clone https://github.com/microsoft/TailwindTraders-Backend.git
-git -C TailwindTraders-Backend checkout ed86d5f
+#git -C TailwindTraders-Backend checkout ed86d5f
 
 # Deploy network infrastructure
 printf "\n*** Deploying networking resources ***\n"
@@ -58,7 +58,7 @@ vnetID=$(az network vnet subnet show --resource-group $azureResourceGroup --vnet
 az group deployment create -g $azureResourceGroup --template-file $tailwindInfrastructure \
   --parameters servicePrincipalId=$azureClientID servicePrincipalSecret=$azureClientSecret \
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
-  aksVersion=1.15.7 pgversion=10 vnetSubnetID=$vnetID
+  aksVersion=1.18.4 pgversion=10 vnetSubnetID=$vnetID
 
 # # Application Insights (using preview extension)
 az extension add -n application-insights
@@ -133,15 +133,6 @@ helm install --name my-tt-webbff -f $tailwindChartValues --namespace=$nameSpace 
 git clone https://github.com/neilpeterson/TailwindTraders-Website.git
 helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --namespace=$nameSpace --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=v1 TailwindTraders-Website/Deploy/helm/web/
 
-# Label all pods in the twt namespce for the network policy to be applied
-x=$(kubectl get pods -n twt -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{"\t"}{end}' |sort)
-for i in $x
-do
-   kubectl label -n twt pods $i role=twt-app
-done
-
-
-
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
 
@@ -162,79 +153,35 @@ printf "\n***Setting up sclaing backend componets.***\n"
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
 helm install kedacore/keda --namespace keda --name keda
-# This is to wait that keda has enrolled the external metrics api  
-sleep 60
-helm install --name rabbitmq --set rabbitmq.username=user,rabbitmq.password=PASSWORD stable/rabbitmq
 
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rabbitmq-consumer
-data:
-  RabbitMqHost: YW1xcDovL3VzZXI6UEFTU1dPUkRAcmFiYml0bXEuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDo1Njcy
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rabbitmq-consumer
-  namespace: default
-  labels:
-    app: rabbitmq-consumer
-spec:
-  selector:
-    matchLabels:
-      app: rabbitmq-consumer
-  template:
-    metadata:
-      labels:
-        app: rabbitmq-consumer
-    spec:
-      containers:
-      - name: rabbitmq-consumer
-        image: jeffhollan/rabbitmq-client:dev
-        imagePullPolicy: Always
-        command:
-          - receive
-        args:
-          - 'amqp://user:PASSWORD@rabbitmq.default.svc.cluster.local:5672'
-        envFrom:
-        - secretRef:
-            name: rabbitmq-consumer
-      dnsPolicy: ClusterFirst
-      nodeSelector:
-        kubernetes.io/role: agent
-        beta.kubernetes.io/os: linux
-        type: virtual-kubelet
-      tolerations:
-      - key: virtual-kubelet.io/provider
-        operator: Exists
-      - key: azure.com/aci
-        effect: NoSchedule      
----
-apiVersion: keda.k8s.io/v1alpha1
-kind: ScaledObject
-metadata:
-  name: rabbitmq-consumer
-  namespace: default
-  labels:
-    deploymentName: rabbitmq-consumer
-spec:
-  scaleTargetRef:
-    deploymentName: rabbitmq-consumer
-  pollingInterval: 5   # Optional. Default: 30 seconds
-  cooldownPeriod: 30   # Optional. Default: 300 seconds
-  maxReplicaCount: 30  # Optional. Default: 100
-  triggers:
-  - type: rabbitmq
-    metadata:
-      queueName: hello
-      host: RabbitMqHost
-      queueLength  : '5'
-EOF
+printf "\n***Setting up cluster information frontend.***\n"
+helm repo add clusterInfo https://lsantos.dev/apps40-scalingdemo-frontend/helm
+helm repo update
+
+helm upgrade --install --atomic visualization-frontend-$nameSpace \
+--set env=$nameSpace \
+--set image.tag=latest \
+--set ingress.hostname=cluster-info.${INGRESS} \
+--set environment.API_URL=http://visualization-api.${INGRESS} \
+--namespace $nameSpace \
+clusterInfo/visualization-frontend
   
+helm upgrade --install --atomic visualization-backend-$nameSpace \
+--set env=$nameSpace \
+--set image.tag=latest \
+--set ingress.hostname=visualization-api.${INGRESS} \
+--namespace $nameSpace \
+clusterInfo/visualization-backend 
   
-  
+helm upgrade --install aso https://github.com/Azure/azure-service-operator/raw/master/charts/azure-service-operator-0.1.0.tgz \
+        --create-namespace \
+        --namespace=azureoperator-system \
+        --set azureSubscriptionID=$AZURE_SUBSCRIPTION_ID \
+        --set azureTenantID=$AZURE_TENANT_ID \
+        --set azureClientSecret=$AZURE_CLIENT_SECRET \
+        --set image.repository="mcr.microsoft.com/k8s/azureserviceoperator:latest"
+
+
 # Notes
 echo "*************** Connection Information ***************"
 echo "The Tailwind Traders Website can be accessed at:"
