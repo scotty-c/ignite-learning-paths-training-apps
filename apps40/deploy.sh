@@ -130,7 +130,7 @@ helm install --name my-tt-mobilebff -f $tailwindChartValues --namespace=$nameSpa
 helm install --name my-tt-webbff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion $tailwindCharts/webbff
 
 # Pulling from a stable fork of the tailwind website
-git clone https://github.com/neilpeterson/TailwindTraders-Website.git
+git clone https://github.com/microsoft/TailwindTraders-Website.git
 helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --namespace=$nameSpace --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=v1 TailwindTraders-Website/Deploy/helm/web/
 
 # Copy website images to storage
