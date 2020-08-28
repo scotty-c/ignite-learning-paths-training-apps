@@ -77,8 +77,8 @@ printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
 
 AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
 az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
-kubectl apply -f https://raw.githubusercontent.com/Azure/helm-charts/master/docs/prerequisities/helm-rbac-config.yaml
-helm init --wait --service-account tiller
+#kubectl apply -f https://raw.githubusercontent.com/Azure/helm-charts/master/docs/prerequisities/helm-rbac-config.yaml
+#helm init --wait --service-account tiller
 
 printf "\n*** Installing virtual node on Kubernets cluster... ***\n"
 # Deploy virtual node 
