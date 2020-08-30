@@ -73,7 +73,7 @@ az postgres server update --resource-group $azureResourceGroup --name $POSTGRES 
 az postgres server firewall-rule create --resource-group $azureResourceGroup --server-name $POSTGRES --name AllowAllAzureIps --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
 # Install Helm on Kubernetes cluster
-printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
+#printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
 
 AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
 az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
@@ -118,7 +118,6 @@ INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfil
 pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
 
 # App Insights Versions
-kubectl create namespace $nameSpace
 helm install my-tt-login $tailwindCharts/login-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=${pictures}profiles-list
 helm install --name my-tt-product -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=$containerVersion --set inf.storage.productimages=${pictures}product-list --set inf.storage.productdetailimages=${pictures}product-detail $tailwindCharts/products-api
 helm install --name my-tt-coupon -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=$containerVersion --set inf.storage.couponimage=${pictures}coupon-list $tailwindCharts/coupons-api
