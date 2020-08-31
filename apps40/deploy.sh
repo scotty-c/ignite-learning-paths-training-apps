@@ -63,6 +63,8 @@ az group deployment create -g $azureResourceGroup --template-file $tailwindInfra
 # # Application Insights (using preview extension)
 az extension add -n application-insights
 instrumentationKey=$(az monitor app-insights component show --app tt-app-insights --resource-group $azureResourceGroup --query instrumentationKey -o tsv)
+echo $instrumentationKey
+
 
 # Create postgres DB, Disable SSL, and set Firewall
 printf "\n*** Create stockdb Postgres database... ***\n"
