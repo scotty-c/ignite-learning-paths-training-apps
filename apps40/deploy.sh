@@ -121,7 +121,7 @@ pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEnd
 
 # App Insights Versions
 cat $tailwindChartValues
-sed -i 's/\(.*id:.*\)/id: $instrumentationKey/g' $tailwindChartValues
+sed -i "s/\(.*id:.*\)/id: $instrumentationKey/g" $tailwindChartValues
 echo "##############################################"
 cat $tailwindChartValues
 helm install my-tt-login  $tailwindCharts/login-api -f $tailwindChartValues  --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=${pictures}profiles-list
