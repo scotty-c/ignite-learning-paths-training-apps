@@ -15,7 +15,7 @@ containerVersion=v2
 # Tailwind deployment
 tailwindInfrastructure=deployment.json
 tailwindCharts=TailwindTraders-Backend/Deploy/helm
-tailwindChartValuesScript=TailwindTraders-Backend/Deploy/powershell/generate-config.ps1
+tailwindChartValuesScript=TailwindTraders-Backend/Deploy/powershell/Generate-Config.ps1
 tailwindChartValues=/values.yaml
 tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
 tailwindServiceAccount=TailwindTraders-Backend/Deploy/helm/ttsa.yaml
@@ -109,7 +109,7 @@ EOF
 # Create Helm values file
 printf "\n*** Create Helm values file... ***\n"
 
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -outputFile $tailwindChartValues
+pwsh -File $tailwindChartValuesScript -resourceGroup $azureResourceGroup -outputFile $tailwindChartValues
 
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
