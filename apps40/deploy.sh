@@ -137,7 +137,7 @@ helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --names
 
 # Pulling from a stable fork of the tailwind website
 git clone https://github.com/microsoft/TailwindTraders-Website.git
-helm install web TailwindTraders-Website/Deploy/helm/web/ -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --namespace=$nameSpace --set B2C.UseB2C=false --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set az.productvisitsurl={$INGRESS}  --set image.repository=$containerRegistry/web --set image.tag=v1
+helm install web TailwindTraders-Website/Deploy/helm/web/ -f $tailwindChartValues -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --namespace=$nameSpace --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set az.productvisitsurl={$INGRESS}  --set image.repository=$containerRegistry/web --set image.tag=v1
 
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
