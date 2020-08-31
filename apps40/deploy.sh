@@ -109,7 +109,7 @@ EOF
 # Create Helm values file
 printf "\n*** Create Helm values file... ***\n"
 
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -outputFile $tailwindChartValues
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -outputFile $tailwindChartValues -gvaluesTemplate /helm-values/gvalues.template
 
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
