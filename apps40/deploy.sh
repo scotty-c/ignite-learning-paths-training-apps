@@ -121,6 +121,7 @@ pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEnd
 
 # App Insights Versions
 cat $tailwindChartValues
+sed -i 's/\(.*id:.*\)/id: $instrumentationKey/g' $tailwindChartValues
 helm install my-tt-login  $tailwindCharts/login-api -f $tailwindChartValues  --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=${pictures}profiles-list
 helm install my-tt-product $tailwindCharts/products-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=$containerVersion --set inf.storage.productimages=${pictures}product-list --set inf.storage.productdetailimages=${pictures}product-detail
 helm install my-tt-coupon $tailwindCharts/coupons-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=$containerVersion --set inf.storage.couponimage=${pictures}coupon-list
