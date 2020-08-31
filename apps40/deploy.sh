@@ -133,7 +133,7 @@ helm install my-tt-stock $tailwindCharts/stock-api -f $tailwindChartValues --nam
 helm install my-tt-image-classifier $tailwindCharts/image-classifier-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=$containerVersion
 helm install my-tt-cart $tailwindCharts/cart-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=$containerVersion
 helm install my-tt-mobilebff $tailwindCharts/mobilebff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=$containerVersion --set probes.readiness=null
-helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion $tailwindCharts/webbff
+helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion
 
 # Pulling from a stable fork of the tailwind website
 git clone https://github.com/microsoft/TailwindTraders-Website.git
