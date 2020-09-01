@@ -157,6 +157,7 @@ az storage blob upload-batch --destination $BLOB_ENDPOINT --destination profiles
 printf "\n***Setting up sclaing backend componets.***\n"
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
+kubectl create namespace keda
 helm install keda kedacore/keda --namespace keda
 
 printf "\n***Setting up cluster information frontend.***\n"
