@@ -79,8 +79,6 @@ az postgres server firewall-rule create --resource-group $azureResourceGroup --s
 
 AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
 az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
-#kubectl apply -f https://raw.githubusercontent.com/Azure/helm-charts/master/docs/prerequisities/helm-rbac-config.yaml
-#helm init --wait --service-account tiller
 
 printf "\n*** Installing virtual node on Kubernets cluster... ***\n"
 # Deploy virtual node 
@@ -137,7 +135,7 @@ helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --names
 
 # Pulling from a stable fork of the tailwind website
 git clone https://github.com/microsoft/TailwindTraders-Website.git
-helm install web TailwindTraders-Website/Deploy/helm/web/ -f $tailwindChartValues -f TailwindTraders-Website/Deploy/helm/values.b2c.yaml --namespace=$nameSpace --set inf.appinsights.id=$instrumentationKey --set az.productvisitsurl={$INGRESS}  --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=v1
+helm install web TailwindTraders-Website/Deploy/helm/web/ -f TailwindTraders-Website/Deploy/helm/gvalues.yaml -f TailwindTraders-Website/Deploy/helm/values.b2c.yaml --namespace=$nameSpace --set inf.appinsights.id=$instrumentationKey. --set az.productvisitsurl={$INGRESS}  --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=v1
 
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
