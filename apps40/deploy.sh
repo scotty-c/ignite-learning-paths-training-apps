@@ -17,7 +17,7 @@ tailwindInfrastructure=deployment.json
 tailwindCharts=TailwindTraders-Backend/Deploy/helm
 tailwindChartValuesScript=TailwindTraders-Backend/Deploy/powershell/Generate-Config.ps1
 tailwindChartValues=/values.yaml
-tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
+tailwindWebImages=TailwindTraders-Backend/Deploy/tailwindtraders-images
 tailwindServiceAccount=TailwindTraders-Backend/Deploy/helm/ttsa.yaml
 
 # Print out tail command
