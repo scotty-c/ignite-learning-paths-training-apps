@@ -157,7 +157,7 @@ az storage blob upload-batch --destination $BLOB_ENDPOINT --destination profiles
 printf "\n***Setting up sclaing backend componets.***\n"
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
-helm install kedacore/keda --namespace keda --name keda
+helm install keda kedacore/keda --namespace keda
 
 printf "\n***Setting up cluster information frontend.***\n"
 helm repo add clusterInfo https://lsantos.dev/apps40-scalingdemo-frontend/helm
