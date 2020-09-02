@@ -58,7 +58,7 @@ vnetID=$(az network vnet subnet show --resource-group $azureResourceGroup --vnet
 az group deployment create -g $azureResourceGroup --template-file $tailwindInfrastructure \
   --parameters servicePrincipalId=$azureClientID servicePrincipalSecret=$azureClientSecret \
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
-  aksVersion=1.18.4 pgversion=10 vnetSubnetID=$vnetID
+  aksVersion=1.18.6 pgversion=10 vnetSubnetID=$vnetID
 
 # # Application Insights (using preview extension)
 az extension add -n application-insights
@@ -186,7 +186,8 @@ POD="$(kubectl get pods --all-namespaces|grep cert-manager-webhook|awk '{print $
 while [[ $(kubectl -n cert-manager get pods $POD -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do echo "waiting for pod" && sleep 1; done
 
 helm repo add azureserviceoperator https://raw.githubusercontent.com/Azure/azure-service-operator/master/charts
-helm upgrade --install aso https://github.com/Azure/azure-service-operator/raw/master/charts/azure-service-operator-0.1.12993.tgz \
+helm repo update
+helm upgrade --install aso https://github.com/Azure/azure-service-operator/raw/master/charts/azure-service-operator-0.1.0.tgz \
         --create-namespace \
         --namespace=azureoperator-system \
         --set azureSubscriptionID=$AZURE_SUBSCRIPTION_ID \
