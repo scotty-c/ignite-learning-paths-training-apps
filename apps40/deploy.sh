@@ -31,7 +31,6 @@ printf "\n*** Cloning Tailwind code repository... ***\n"
 
 # Clone Tailwind backend and checkout known stable tag
 git clone https://github.com/microsoft/TailwindTraders-Backend.git
-#git -C TailwindTraders-Backend checkout ed86d5f
 
 # Deploy network infrastructure
 printf "\n*** Deploying networking resources ***\n"
@@ -115,6 +114,7 @@ pwsh -File $tailwindChartValuesScript -resourceGroup $azureResourceGroup -output
 printf "\n***Deplpying applications to Kubernetes.***\n"
 
 INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
+echo $INGRESS
 pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
 
 # App Insights Versions
