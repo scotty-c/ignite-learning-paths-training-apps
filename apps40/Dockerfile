@@ -22,4 +22,4 @@ RUN mv ./kubectl /usr/local/bin
 COPY . /
 RUN chmod 777 boot-strap.sh
 
-CMD ["bash", "-l", "/boot-strap.sh"]
+CMD ["/boot-strap.sh"]
