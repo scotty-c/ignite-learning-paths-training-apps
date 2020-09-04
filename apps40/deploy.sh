@@ -57,7 +57,7 @@ vnetID=$(az network vnet subnet show --resource-group $azureResourceGroup --vnet
 az group deployment create -g $azureResourceGroup --template-file $tailwindInfrastructure \
   --parameters servicePrincipalId=$azureClientID servicePrincipalSecret=$azureClientSecret \
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
-  aksVersion=1.18.4 pgversion=10 vnetSubnetID=$vnetID
+  aksVersion=1.18.6 pgversion=10 vnetSubnetID=$vnetID
 
 # # Application Insights (using preview extension)
 az extension add -n application-insights
@@ -113,8 +113,8 @@ pwsh -File $tailwindChartValuesScript -resourceGroup $azureResourceGroup -output
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
 
-INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
-echo $INGRESS
+#INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
+INGRESS=$(az aks show --resource-group k8s-shared --name k8s | jq -r .addonProfiles.httpapplicationrouting.config.httpapplicationroutingzonename)
 pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
 
 # App Insights Versions

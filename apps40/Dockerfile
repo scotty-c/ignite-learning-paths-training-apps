@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/powershell
 
 # Install apt-get
 RUN apt-get update && \
-    apt-get install curl -y
+    apt-get install curl jq -y
 
 # Install Git
 RUN apt-get install git -y
