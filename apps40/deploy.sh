@@ -114,7 +114,7 @@ pwsh -File $tailwindChartValuesScript -resourceGroup $azureResourceGroup -output
 printf "\n***Deplpying applications to Kubernetes.***\n"
 
 #INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
-INGRESS=$(az aks show --resource-group k8s-shared --name k8s | jq -r .addonProfiles.httpapplicationrouting.config.httpapplicationroutingzonename)
+INGRESS=$(az aks show --resource-group $azureResourceGroup --name $AKS_CLUSTER | jq -r .addonProfiles.httpapplicationrouting.config.httpapplicationroutingzonename)
 pictures=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
 
 # App Insights Versions
