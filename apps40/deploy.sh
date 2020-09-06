@@ -9,7 +9,7 @@ sqlServePassword=Password2020!
 
 # Azure and container image location
 azureResourceGroup=$RESOURCE_GROUP_NAME
-containerRegistry=neilpeterson
+containerRegistry=scottyc
 containerVersion=v2
 
 # Tailwind deployment
@@ -73,9 +73,6 @@ az postgres db create -g $azureResourceGroup -s $POSTGRES -n stockdb
 az postgres server update --resource-group $azureResourceGroup --name $POSTGRES --ssl-enforcement Disabled
 az postgres server firewall-rule create --resource-group $azureResourceGroup --server-name $POSTGRES --name AllowAllAzureIps --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
-# Install Helm on Kubernetes cluster
-#printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
-
 AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
 az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
 
@@ -131,7 +128,7 @@ helm install my-tt-stock $tailwindCharts/stock-api -f $tailwindChartValues --nam
 helm install my-tt-image-classifier $tailwindCharts/image-classifier-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=$containerVersion
 helm install my-tt-cart $tailwindCharts/cart-api -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=$containerVersion
 helm install my-tt-mobilebff $tailwindCharts/mobilebff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=$containerVersion --set probes.readiness=null
-helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion
+helm install my-tt-webbff $tailwindCharts/webbff -f $tailwindChartValues --namespace=$nameSpace --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion --set hpa.activated=true
 
 # Pulling from a stable fork of the tailwind website
 git clone https://github.com/microsoft/TailwindTraders-Website.git
